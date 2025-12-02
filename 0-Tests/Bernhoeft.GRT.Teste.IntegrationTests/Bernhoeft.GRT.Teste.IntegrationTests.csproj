@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,6 +12,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="SeedEasy" Version="2.0.3" />
     <PackageReference Include="Soenneker.Utils.AutoBogus" Version="3.0.689" />
     <PackageReference Include="xunit" Version="2.9.3" />
@@ -23,6 +25,15 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\1-Presentation\Bernhoeft.GRT.Teste.Api\Bernhoeft.GRT.Teste.Api.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Bernhoeft.GRT.Core">
+      <HintPath>..\..\Libs\Bernhoeft.GRT.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Bernhoeft.GRT.Core.EntityFramework">
+      <HintPath>..\..\Libs\Bernhoeft.GRT.Core.EntityFramework.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

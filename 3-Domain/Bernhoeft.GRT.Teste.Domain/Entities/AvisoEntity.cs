@@ -7,8 +7,8 @@
     {
         public int Id { get; private set; }
         public bool Ativo { get; set; } = true;
-        public string Titulo { get; set; }
-        public string Mensagem { get; set; }
+        public required string Titulo { get; set; }
+        public required string Mensagem { get; set; }
         
         /// <summary>
         /// Data de criação do aviso. Definida automaticamente no momento da criação.
