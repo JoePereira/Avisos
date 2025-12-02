@@ -1,12 +1,12 @@
-﻿using Bernhoeft.GRT.Teste.Domain.Entities;
+using Bernhoeft.GRT.Teste.Domain.Entities;
 
 namespace Bernhoeft.GRT.Teste.Application.Responses.Queries.v1
 {
     /// <summary>
-    /// Response para retorno de lista de avisos.
+    /// Response para retorno de um aviso específico.
     /// Inclui campos de auditoria (DataCriacao e DataEdicao).
     /// </summary>
-    public class GetAvisosResponse
+    public class GetAvisoResponse
     {
         public int Id { get; set; }
         public bool Ativo { get; set; }
@@ -16,9 +16,9 @@ namespace Bernhoeft.GRT.Teste.Application.Responses.Queries.v1
         public DateTime? DataEdicao { get; set; }
 
         /// <summary>
-        /// Conversão implícita de AvisoEntity para GetAvisosResponse.
+        /// Conversão implícita de AvisoEntity para GetAvisoResponse.
         /// </summary>
-        public static implicit operator GetAvisosResponse(AvisoEntity entity) => new()
+        public static implicit operator GetAvisoResponse(AvisoEntity entity) => new()
         {
             Id = entity.Id,
             Ativo = entity.Ativo,
@@ -29,3 +29,4 @@ namespace Bernhoeft.GRT.Teste.Application.Responses.Queries.v1
         };
     }
 }
+
