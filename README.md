@@ -6,6 +6,162 @@ Esta documentação descreve as implementações realizadas para o desafio técn
 
 ---
 
+## Pré-requisitos
+
+Antes de começar, certifique-se de ter instalado:
+
+- **.NET 9.0 SDK** (ou superior)
+  - Verifique sua versão: `dotnet --version`
+  - Download: https://dotnet.microsoft.com/download/dotnet/9.0
+
+---
+
+## Início Rápido
+
+### 1. Clonar o Repositório
+
+```bash
+git clone <url-do-repositorio>
+cd Avisos
+```
+
+### 2. Restaurar Dependências
+
+```bash
+dotnet restore
+```
+
+### 3. Compilar o Projeto
+
+```bash
+dotnet build
+```
+
+### 4. Executar a API
+
+```bash
+dotnet run --project 1-Presentation/Bernhoeft.GRT.Teste.Api
+```
+
+### 5. Acessar a Aplicação
+
+| Protocolo | URL |
+|-----------|-----|
+| HTTP | http://localhost:5000 |
+| HTTPS | https://localhost:5001 |
+
+> **Swagger UI** disponível na raiz: https://localhost:5001/
+
+---
+
+## Executar os Testes
+
+### Executar todos os testes
+
+```bash
+dotnet test
+```
+
+### Executar com detalhes
+
+```bash
+dotnet test --verbosity normal
+```
+
+### Executar testes específicos
+
+```bash
+# Testes de criação
+dotnet test --filter "FullyQualifiedName~CreateAvisoHandler"
+
+# Testes de leitura
+dotnet test --filter "FullyQualifiedName~GetAvisoHandler"
+
+# Testes de atualização
+dotnet test --filter "FullyQualifiedName~UpdateAvisoHandler"
+
+# Testes de exclusão
+dotnet test --filter "FullyQualifiedName~DeleteAvisoHandler"
+```
+
+### Gerar relatório de cobertura (opcional)
+
+```bash
+dotnet test --collect:"XPlat Code Coverage"
+```
+
+---
+
+## Solução de Problemas
+
+### Erro: "Duplicar atributo" durante o build
+
+**Causa**: Arquivos de build antigos conflitando com os novos.
+
+**Solução**:
+
+```powershell
+# Windows PowerShell
+Get-ChildItem -Path . -Include Build,obj,bin -Recurse -Directory | Remove-Item -Recurse -Force
+dotnet build
+```
+
+```bash
+# Linux/Mac
+find . -type d \( -name "Build" -o -name "obj" -o -name "bin" \) -exec rm -rf {} +
+dotnet build
+```
+
+### Erro: "O tipo 'IRepository<>' está definido em um assembly que não é referenciado"
+
+**Causa**: Referências às DLLs do Bernhoeft.GRT.Core não configuradas.
+
+**Solução**: Verifique se os arquivos na pasta `Libs/` estão presentes:
+- `Bernhoeft.GRT.Core.dll`
+- `Bernhoeft.GRT.Core.EntityFramework.dll`
+- `Bernhoeft.GRT.Core.Rest.dll`
+
+### Erro de certificado HTTPS
+
+**Solução**:
+
+```bash
+dotnet dev-certs https --trust
+```
+
+---
+
+## Estrutura do Projeto
+
+```
+Avisos/
+├── 0-Tests/                          # Testes
+│   └── Bernhoeft.GRT.Teste.IntegrationTests/
+│       └── Handlers/
+│           ├── Commands/             # Testes de Create, Update, Delete
+│           └── Queries/              # Testes de GetAviso, GetAvisos
+├── 1-Presentation/                   # Camada de Apresentação
+│   └── Bernhoeft.GRT.Teste.Api/
+│       ├── Controllers/              # Controllers REST
+│       └── Program.cs                # Configuração da API
+├── 2-Application/                    # Camada de Aplicação
+│   └── Bernhoeft.GRT.Teste.Application/
+│       ├── Handlers/                 # Handlers MediatR (CQRS)
+│       ├── Requests/                 # DTOs de entrada
+│       └── Responses/                # DTOs de saída
+├── 3-Domain/                         # Camada de Domínio
+│   └── Bernhoeft.GRT.Teste.Domain/
+│       ├── Entities/                 # Entidades de domínio
+│       └── Interfaces/               # Interfaces de repositórios
+├── 4-Infra/                          # Camada de Infraestrutura
+│   └── Bernhoeft.GRT.Teste.Infra.Persistence.InMemory/
+│       └── Repositories/             # Implementação dos repositórios
+├── Libs/                             # DLLs do Bernhoeft.GRT.Core
+└── Bernhoeft.GRT.Teste.sln           # Solution file
+```
+
+---
+
 ## Endpoints Implementados
 
 ### GET /api/v1/avisos
@@ -58,6 +214,25 @@ Remove um aviso (soft delete).
 
 ---
 
+## Testes Unitários
+
+O projeto inclui **34 testes unitários** cobrindo todos os cenários do CRUD:
+
+| Handler | Cenários Testados |
+|---------|-------------------|
+| **CreateAvisoHandler** | Criação bem-sucedida, DataCriacao definida, Ativo=true, dados corretos |
+| **GetAvisoHandler** | Busca existente, NotFound, NoTracking, DataEdicao, múltiplos IDs |
+| **GetAvisosHandler** | Lista avisos, NoContent, filtro ativos, dados corretos, lista única |
+| **UpdateAvisoHandler** | Atualização sucesso, NotFound, apenas mensagem, chamadas ao repositório |
+| **DeleteAvisoHandler** | Deleção sucesso, NotFound, ID correto, mensagem confirmação |
+
+### Tecnologias de Teste
+- **xUnit** - Framework de testes
+- **Moq** - Mocking de dependências
+- **FluentAssertions** - Asserções legíveis
+
+---
+
 ## Decisões de Design e Implementação
 
 ### 1. Campos de Auditoria (DataCriacao e DataEdicao)
@@ -107,6 +282,53 @@ Todos os métodos de busca no repositório (`ObterTodosAvisosAsync`, `ObterAviso
 
 ---
 
+## Padrão Arquitetural
+
+A implementação seguiu rigorosamente o padrão existente:
+
+- **Clean Architecture** com separação em camadas
+- **CQRS** com MediatR para separar Commands e Queries
+- **Repository Pattern** para acesso a dados
+- **FluentValidation** para validações na camada de apresentação
+
+---
+
+## Banco de Dados
+
+O projeto utiliza **Entity Framework Core InMemory**, ou seja:
+- Não precisa de banco de dados externo
+- Os dados ficam apenas em memória
+- **Dados são perdidos ao reiniciar a aplicação**
+
+---
+
+## Comandos Úteis
+
+```bash
+# Restaurar dependências
+dotnet restore
+
+# Compilar
+dotnet build
+
+# Limpar build
+dotnet clean
+
+# Executar API
+dotnet run --project 1-Presentation/Bernhoeft.GRT.Teste.Api
+
+# Executar testes
+dotnet test
+
+# Executar testes com detalhes
+dotnet test --verbosity normal
+
+# Publicar para produção
+dotnet publish -c Release
+```
+
+---
+
 ## Estrutura de Arquivos Criados/Modificados
 
 ### Entidade (Domain)
@@ -147,28 +369,9 @@ Todos os métodos de busca no repositório (`ObterTodosAvisosAsync`, `ObterAviso
 ### Controller (Presentation)
 - `AvisosController.cs` - Endpoints REST completos
 
----
-
-## Padrão Arquitetural
-
-A implementação seguiu rigorosamente o padrão existente:
-
-- **Clean Architecture** com separação em camadas
-- **CQRS** com MediatR para separar Commands e Queries
-- **Repository Pattern** para acesso a dados
-- **FluentValidation** para validações na camada de apresentação
-
----
-
-## Execução
-
-```bash
-# Build
-dotnet build
-
-# Run
-dotnet run --project 1-Presentation/Bernhoeft.GRT.Teste.Api
-
-# Acessar Swagger
-# http://localhost:{porta}/
-```
+### Testes (Tests)
+- `CreateAvisoHandlerTests.cs` - Testes de criação
+- `UpdateAvisoHandlerTests.cs` - Testes de atualização
+- `DeleteAvisoHandlerTests.cs` - Testes de exclusão
+- `GetAvisoHandlerTests.cs` - Testes de busca por ID
+- `GetAvisosHandlerTests.cs` - Testes de listagem
