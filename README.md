@@ -21,7 +21,7 @@ Antes de começar, certifique-se de ter instalado:
 ### 1. Clonar o Repositório
 
 ```bash
-git clone <url-do-repositorio>
+git clone https://github.com/JoePereira/Avisos.git
 cd Avisos
 ```
 
@@ -68,28 +68,6 @@ dotnet test
 dotnet test --verbosity normal
 ```
 
-### Executar testes específicos
-
-```bash
-# Testes de criação
-dotnet test --filter "FullyQualifiedName~CreateAvisoHandler"
-
-# Testes de leitura
-dotnet test --filter "FullyQualifiedName~GetAvisoHandler"
-
-# Testes de atualização
-dotnet test --filter "FullyQualifiedName~UpdateAvisoHandler"
-
-# Testes de exclusão
-dotnet test --filter "FullyQualifiedName~DeleteAvisoHandler"
-```
-
-### Gerar relatório de cobertura (opcional)
-
-```bash
-dotnet test --collect:"XPlat Code Coverage"
-```
-
 ---
 
 ## Solução de Problemas
@@ -110,54 +88,6 @@ dotnet build
 # Linux/Mac
 find . -type d \( -name "Build" -o -name "obj" -o -name "bin" \) -exec rm -rf {} +
 dotnet build
-```
-
-### Erro: "O tipo 'IRepository<>' está definido em um assembly que não é referenciado"
-
-**Causa**: Referências às DLLs do Bernhoeft.GRT.Core não configuradas.
-
-**Solução**: Verifique se os arquivos na pasta `Libs/` estão presentes:
-- `Bernhoeft.GRT.Core.dll`
-- `Bernhoeft.GRT.Core.EntityFramework.dll`
-- `Bernhoeft.GRT.Core.Rest.dll`
-
-### Erro de certificado HTTPS
-
-**Solução**:
-
-```bash
-dotnet dev-certs https --trust
-```
-
----
-
-## Estrutura do Projeto
-
-```
-Avisos/
-├── 0-Tests/                          # Testes
-│   └── Bernhoeft.GRT.Teste.IntegrationTests/
-│       └── Handlers/
-│           ├── Commands/             # Testes de Create, Update, Delete
-│           └── Queries/              # Testes de GetAviso, GetAvisos
-├── 1-Presentation/                   # Camada de Apresentação
-│   └── Bernhoeft.GRT.Teste.Api/
-│       ├── Controllers/              # Controllers REST
-│       └── Program.cs                # Configuração da API
-├── 2-Application/                    # Camada de Aplicação
-│   └── Bernhoeft.GRT.Teste.Application/
-│       ├── Handlers/                 # Handlers MediatR (CQRS)
-│       ├── Requests/                 # DTOs de entrada
-│       └── Responses/                # DTOs de saída
-├── 3-Domain/                         # Camada de Domínio
-│   └── Bernhoeft.GRT.Teste.Domain/
-│       ├── Entities/                 # Entidades de domínio
-│       └── Interfaces/               # Interfaces de repositórios
-├── 4-Infra/                          # Camada de Infraestrutura
-│   └── Bernhoeft.GRT.Teste.Infra.Persistence.InMemory/
-│       └── Repositories/             # Implementação dos repositórios
-├── Libs/                             # DLLs do Bernhoeft.GRT.Core
-└── Bernhoeft.GRT.Teste.sln           # Solution file
 ```
 
 ---
