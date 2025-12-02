@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591;CA1416</NoWarn>
+    <DefaultItemExcludes>$(DefaultItemExcludes);Build\**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>

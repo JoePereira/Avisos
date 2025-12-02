@@ -1,5 +1,5 @@
-﻿using Bernhoeft.GRT.ContractWeb.Domain.SqlServer.ContractStore.Entities;
-using Bernhoeft.GRT.ContractWeb.Infra.Persistence.SqlServer.ContractStore.Mappings;
+﻿using Bernhoeft.GRT.Teste.Domain.Entities;
+using Bernhoeft.GRT.Teste.Infra.Persistence.InMemory.Mappings;
 using Bernhoeft.GRT.Core.EntityFramework.Domain.Interfaces;
 using Bernhoeft.GRT.Core.Helper;
 using Microsoft.EntityFrameworkCore;
@@ -25,19 +25,22 @@ namespace Microsoft.Extensions.DependencyInjection
                                {
                                    Titulo = "Titulo 1",
                                    Mensagem = "Mensagem 1",
+                                   Ativo = true,
+                                   DataCriacao = DateTime.UtcNow
                                });
                                dbSet.Add(new()
                                {
                                    Titulo = "Titulo 2",
                                    Mensagem = "Mensagem 2",
+                                   Ativo = true,
+                                   DataCriacao = DateTime.UtcNow
                                });
                                await context.SaveChangesAsync(cancellationToken);
                            }
                        });
             });
-            @this.RegisterServicesFromAssemblyContaining<AvisoMap>(); // Register Repositories with InjectServiceAttribute.
+            @this.RegisterServicesFromAssemblyContaining<AvisoMap>();
 
-            // Create DataBase in Memory.
             using var serviceProvider = @this.BuildServiceProvider();
             var dbContext = serviceProvider.GetRequiredService<IContext>();
             AsyncHelper.RunSync(() => ((DbContext)dbContext).Database.EnsureCreatedAsync());
